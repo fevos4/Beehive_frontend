@@ -7,17 +7,20 @@ import Signin from "./Pages/Signin";
 import ActivationPage from "./Pages/ActivationPage";
 import BeehiveActivation from "./Pages/BeehiveActivation";
 import Dashboard from "./Pages/Dashboard";
+import History from "./Pages/History";
+import Settings from "./Pages/Settings";
 
 export default function App() {
   const location = useLocation();
 
+  // Hide Navbar on "/dashboard" and "/history" pages
+  const hideNavbar = location.pathname === "/dashboard" || location.pathname === "/history" || location.pathname === "/settings";
+
   return (
     <div>
-      {/* Conditionally render Navbar except on Dashboard route */}
-      {location.pathname !== "/dashboard" && <Navbar />}
+      {!hideNavbar && <Navbar />} {/* Conditionally render Navbar */}
 
       <Routes>
-        {/* Home route with Hero and About together */}
         <Route 
           path="/" 
           element={
@@ -30,9 +33,9 @@ export default function App() {
         <Route path="/active" element={<ActivationPage />} />
         <Route path="/beeactive" element={<BeehiveActivation />} />
         <Route path="/dashboard" element={<Dashboard />} />
-
-        {/* Separate route for Signin */}
-        <Route path="/Signin" element={<Signin />} />
+        <Route path="/history" element={<History />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/signin" element={<Signin />} />
       </Routes>
     </div>
   );
