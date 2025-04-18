@@ -51,7 +51,7 @@ const BeehiveActivation = () => {
               className="w-full mt-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#F28C28] focus:border-transparent"
             />
           </div>
-          <Link to = "/dashboard">
+          <Link to = "/hives">
           <button
             type="submit"
             className="w-full bg-[#F28C28]  hover:bg-orange-300 text-black font-bold py-2 px-4 rounded-lg transition duration-300"

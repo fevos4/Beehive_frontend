@@ -1,8 +1,9 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { MdOutlineDashboard } from "react-icons/md";
-import { FaHistory } from "react-icons/fa";
+import { FaHistory }            from "react-icons/fa";
 import { IoIosSettings, IoIosArrowDropright, IoIosArrowDropleft } from "react-icons/io";
-import { IoLogOut } from "react-icons/io5";
+import { IoLogOut }             from "react-icons/io5";
 
 const Menus = ({ isSidebarVisible, toggleSidebar }) => {
   return (
@@ -11,7 +12,7 @@ const Menus = ({ isSidebarVisible, toggleSidebar }) => {
         isSidebarVisible ? "translate-x-0" : "-translate-x-full"
       }`}
     >
-      {/* Sidebar Toggle Button */}
+      {/* Toggle Button */}
       <button
         onClick={toggleSidebar}
         className="absolute -right-7 top-10 bg-gray-900 text-white p-2 rounded-full shadow-md"
@@ -22,22 +23,53 @@ const Menus = ({ isSidebarVisible, toggleSidebar }) => {
       <div className="mt-20">
         <h2 className="text-2xl font-bold text-center mb-8">User Dashboard</h2>
         <ul className="space-y-4">
-          <li className="px-6 py-2 hover:bg-gray-700 flex items-center cursor-pointer" to="/dashboard">
-            <MdOutlineDashboard className="mr-3 text-2xl" />
-            <span>Dashboard</span>
+
+          <li>
+            <Link
+              to="/hives"
+              onClick={toggleSidebar}
+              className="px-6 py-2 hover:bg-gray-700 flex items-center"
+            >
+              <MdOutlineDashboard className="mr-3 text-2xl" />
+              <span>Dashboard</span>
+            </Link>
           </li>
-          <li className="px-6 py-2 hover:bg-gray-700 flex items-center cursor-pointer" to="/history">
-            <FaHistory className="mr-3 text-2xl" />
-            <span>History</span>
+
+          <li>
+            <Link
+              to="/history"
+              onClick={toggleSidebar}
+              className="px-6 py-2 hover:bg-gray-700 flex items-center"
+            >
+              <FaHistory className="mr-3 text-2xl" />
+              <span>History</span>
+            </Link>
           </li>
-          <li className="px-6 py-2 hover:bg-gray-700 flex items-center cursor-pointer">
-            <IoIosSettings className="mr-3 text-2xl" />
-            <span>Settings</span>
+
+          <li>
+            <Link
+              to="/settingway"
+              onClick={toggleSidebar}
+              className="px-6 py-2 hover:bg-gray-700 flex items-center"
+            >
+              <IoIosSettings className="mr-3 text-2xl" />
+              <span>Settings</span>
+            </Link>
           </li>
-          <li className="px-6 py-2 hover:bg-gray-700 flex items-center cursor-pointer">
-            <IoLogOut className="mr-3 text-2xl" />
-            <span>Logout</span>
+
+          <li>
+            <button
+              onClick={() => {
+                // your logout logic here
+                toggleSidebar();
+              }}
+              className="px-6 py-2 hover:bg-gray-700 flex items-center w-full text-left"
+            >
+              <IoLogOut className="mr-3 text-2xl" />
+              <span>Logout</span>
+            </button>
           </li>
+
         </ul>
       </div>
 

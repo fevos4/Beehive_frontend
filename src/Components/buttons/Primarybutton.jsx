@@ -8,7 +8,7 @@ const Pbutton = ({ text, to, onClick, className }) => {
         // If 'to' is provided, render as a Link
         <Link to={to}>
           <button
-            className="font-montserrat bg-[#F28C28] text-black hover:bg-orange-300 font-bold px-4 py-2 rounded-lg"
+            className="font-montserrat bg-[#F28C28] text-black hover:bg-orange-300 px-4 py-2 rounded-full"
             onClick={onClick}
           >
             {text}

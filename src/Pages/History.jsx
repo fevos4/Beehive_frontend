@@ -24,8 +24,11 @@ const History = () => {
 
       {/* Main content area */}
       <div
-        className={`p-10 transition-all duration-300 ${isSidebarVisible ? "ml-[250px] w-[calc(100%-250px)]" : "ml-0 w-full"} font-montserrat`}
+        className={`p-10 transition-all duration-300 ${isSidebarVisible ? "ml-0 md:ml-[250px]" : "ml-0 w-full"} font-montserrat`}
       >
+         <div className="flex items-center space-x-2 border-b pb-3 mb-6">
+          <img src="/assets/logos.png" alt="Logo" className="w-32 md:w-40" />
+        </div>
         <h1 className="md:text-3xl text-2xl font-bold">History</h1>
         <p className="text-gray-600 md:text-sm text-xs">View and analyze historical data</p>
 

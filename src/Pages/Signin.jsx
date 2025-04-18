@@ -3,14 +3,18 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 const AuthPage = () => {
-  const [isSignIn, setIsSignIn] = useState(true); 
-  const [name, setName] = useState(""); 
-  const [password, setPassword] = useState(""); 
-  const [error, setError] = useState(""); 
-  const [isLoading, setIsLoading] = useState(false); 
-  const navigate = useNavigate(); 
+  const [isSignIn, setIsSignIn] = useState(true);
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const API_URL = isSignIn
+    ? "http://127.0.0.1:8000/act_auth/token/"
+    : "http://127.0.0.1:8000/register/";
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !password) {
       setError("Please fill out both fields.");
@@ -18,19 +22,37 @@ const AuthPage = () => {
     }
 
     setIsLoading(true);
-    setError(""); 
+    setError("");
 
-   
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: name, // Make sure the API expects "username"
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Authentication failed");
+      }
+
       if (isSignIn) {
-       
-        navigate("/dashboard");
+        localStorage.setItem("token", data.access); // Store token if login is successful
+        navigate("/beehivedashboard");
       } else {
-        
         navigate("/active");
       }
-    }, 2000);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -104,7 +126,7 @@ const AuthPage = () => {
             </div>
             <button
               type="submit"
-              className="w-full py-2 md:text-sm text-xs bg-[#F28C28]  hover:bg-orange-300 text-black rounded-md"
+              className="w-full py-2 md:text-sm text-xs bg-[#F28C28] hover:bg-orange-300 text-black rounded-md"
             >
               {isLoading ? "Loading..." : isSignIn ? "Sign In" : "Sign Up"}
             </button>
