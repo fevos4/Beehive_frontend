@@ -38,7 +38,7 @@ const Hero = () => {
 
         <div className="mt-4 flex items-center gap-2 text-xs text-black cursor-pointer font-montserrat hover:underline">
           <FaBook />
-          <span>User manual</span>
+         <a href="assets/User_manual.pdf">User manual</a> 
         </div>
       </div>
 

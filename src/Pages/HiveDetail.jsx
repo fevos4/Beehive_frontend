@@ -1,30 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import Menus from "./Menus";
 import { useLocation } from "react-router-dom";
+import SensorCardWithGraph from "./SensorCardWithGraph"; // Import the card component
+import axios from "axios";
 
 const BeehiveDashboard = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const sidebarRef = useRef(null);
 
-  // Get hiveName from location state
+  const [allSensorData, setAllSensorData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const location = useLocation();
   const hiveName = location.state?.hiveName || "Hive 01"; // default fallback
 
-  const data = {
-    humidity: "45%",
-    internalTemp: "45C",
-    externalTemp: "45C",
-    weight: "45 KG",
+  const staticData = {
     alert: "Not detected",
     prediction: "Not detected",
   };
-
-  const sensorCards = [
-    { label: "Humidity", value: data.humidity },
-    { label: "Internal Temperature", value: data.internalTemp },
-    { label: "External Temperature", value: data.externalTemp },
-    { label: "Weight", value: data.weight },
-  ];
 
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
@@ -40,6 +33,23 @@ const BeehiveDashboard = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("/api/sensor-data"); 
+        setAllSensorData(response.data); // Expect { humidity: [...], internalTemp: [...], externalTemp: [...], weight: [...] }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching sensor data:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 8000); // Refresh every 8 seconds
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -64,30 +74,28 @@ const BeehiveDashboard = () => {
             {hiveName}
           </h2>
 
+          {/* Sensor Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {sensorCards.map((card, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-xl p-4 shadow-md flex flex-col justify-between"
-              >
-                <h3 className="text-gray-600 mb-1">{card.label}</h3>
-                <p className="text-2xl font-bold">{card.value}</p>
-                <div className="mt-3 h-40 bg-gray-100 rounded-md flex items-center justify-center text-gray-400 text-sm">
-                  Graph
-                </div>
-              </div>
-            ))}
+            {allSensorData && (
+              <>
+                <SensorCardWithGraph label="Humidity" data={allSensorData.humidity} unit="%" loading={loading} />
+                <SensorCardWithGraph label="Internal Temperature" data={allSensorData.internalTemp} unit="°C" loading={loading} />
+                <SensorCardWithGraph label="External Temperature" data={allSensorData.externalTemp} unit="°C" loading={loading} />
+                <SensorCardWithGraph label="Weight" data={allSensorData.weight} unit="KG" loading={loading} />
+              </>
+            )}
           </div>
 
+          {/* Alert and Prediction */}
           <div className="bg-white rounded-xl p-4 shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center">
             <div>
               <p>
                 <span className="font-semibold">Alert:</span>{" "}
-                <span className="text-gray-700">{data.alert}</span>
+                <span className="text-gray-700">{staticData.alert}</span>
               </p>
               <p>
                 <span className="font-semibold">Prediction:</span>{" "}
-                <span className="text-gray-700">{data.prediction}</span>
+                <span className="text-gray-700">{staticData.prediction}</span>
               </p>
             </div>
             <button className="mt-4 sm:mt-0 bg-transparent border border-gray-400 rounded px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
