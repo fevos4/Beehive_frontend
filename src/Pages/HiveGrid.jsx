@@ -92,16 +92,17 @@ const HiveGrid = () => {
               className="flex transition-transform duration-500 ease-in-out"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
+              {console.log("hives:", hives)}
               {hives.map((hive, index) => (
                 <div key={hive.id || index} className="flex-shrink-0 w-full">
                   <HiveCard
-                    hiveNumber={hive.hive_number}
+                    hiveNumber={hive.name}
                     imageSrc={hive.image || "/assets/hhive.png"}
                     linkTo={`/beehivedashboard/${hive.id}`}
-                    internalTemp={hive.internal_temp}
-                    externalTemp={hive.external_temp}
-                    humidity={hive.humidity}
-                    weight={hive.weight}
+                    internalTemp={hive.Temperature}
+                    externalTemp={hive.ExternalTemperature}
+                    humidity={hive.Humidity}
+                    weight={hive.Weight}
                   />
                 </div>
               ))}

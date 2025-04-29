@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const HiveCard = ({ hiveNumber, imageSrc, linkTo = "/beehivedashboard", internalTemp, externalTemp, humidity, weight }) => {
+  console.log("HiveCard props:", { hiveNumber, imageSrc, linkTo, internalTemp, externalTemp, humidity, weight });
   return (
     <div className="flex flex-col items-center mt-14">
       {/* Hive Button with dynamic link */}
