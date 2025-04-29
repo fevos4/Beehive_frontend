@@ -26,14 +26,23 @@ const HiveGrid = () => {
   useEffect(() => {
     const fetchHives = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/sensors/api/beehive/4/");
-        setHives(response.data); // Assuming response.data is an array of hives
+        const token = localStorage.getItem("token");
+        console.log('token:' ,token);
+        const response = await axios.get("http://127.0.0.1:8000/sensors/api/beehive/1/",  {
+          headers: {
+            Authorization: `Bearer ${token}`, // Replace YOUR_TOKEN_HERE with your actual token
+          },
+        } );
+        
+        setHives([response.data]); // Assuming response.data is an array of hives
       } catch (error) {
         console.error("Failed to fetch hive data:", error);
+      
       }
     };
 
-    fetchHives();
+   fetchHives();
+
   }, []);
 
   // Handle click outside sidebar
@@ -78,7 +87,7 @@ const HiveGrid = () => {
           <button onClick={handlePrev} className="absolute left-0 p-2 bg-white rounded-full shadow z-10">
             <FaAngleLeft size={24} />
           </button>
-          <div className="w-full max-w-sm overflow-hidden relative h-[400px]">
+          <div className="w-full max-w-sm overflow-hidden relative h-[450px]">
             <div
               className="flex transition-transform duration-500 ease-in-out"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}

@@ -71,6 +71,7 @@ const AuthPage = () => {
     
         if (isSignIn) {
           // Save token or do something else after login
+          localStorage.setItem("token", data.access); // Save token to local storage
           console.log("Logged in successfully!", data);
           navigate("/hives"); // 🛠️ Redirect after login (you can adjust this)
         } else {
