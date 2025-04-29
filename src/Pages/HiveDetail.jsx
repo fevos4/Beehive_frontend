@@ -1,22 +1,65 @@
 import React, { useState, useEffect, useRef } from "react";
 import Menus from "./Menus";
 import { useLocation } from "react-router-dom";
-import SensorCardWithGraph from "./SensorCardWithGraph"; // Import the card component
-import axios from "axios";
+import SensorCard from "./SensorChart"; // Import the new component
 
 const BeehiveDashboard = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  const [sensorData, setSensorData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const sidebarRef = useRef(null);
 
-  const [allSensorData, setAllSensorData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
+  // Get hiveName from location state
   const location = useLocation();
   const hiveName = location.state?.hiveName || "Hive 01"; // default fallback
 
-  const staticData = {
-    alert: "Not detected",
-    prediction: "Not detected",
+  const userId = localStorage.getItem("userId"); // or from auth context
+  const API_ENDPOINT = `http://127.0.0.1:8000/sensors/api/beehive/${userId}/`;  
+
+  const fetchSensorData = async () => {
+    try {
+      const token = localStorage.getItem("token"); // or from cookies, context, etc.
+  
+      const response = await fetch(API_ENDPOINT, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // or `Token ${token}` depending on your backend
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      setSensorData(data);
+      setIsLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setIsLoading(false);
+      console.error("Error fetching sensor data:", err);
+    }
+  };
+  
+  
+
+  useEffect(() => {
+    fetchSensorData();
+    
+    // Set up polling every 10 seconds
+    const intervalId = setInterval(fetchSensorData, 10000);
+    
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // Process data for display
+  const getLatestValue = (dataKey) => {
+    if (!sensorData || !sensorData[dataKey] || sensorData[dataKey].length === 0) {
+      return "N/A";
+    }
+    const latestEntry = sensorData[dataKey][sensorData[dataKey].length - 1];
+    return latestEntry.value;
   };
 
   const toggleSidebar = () => {
@@ -35,22 +78,55 @@ const BeehiveDashboard = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("/api/sensor-data"); 
-        setAllSensorData(response.data); // Expect { humidity: [...], internalTemp: [...], externalTemp: [...], weight: [...] }
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching sensor data:", error);
-        setLoading(false);
-      }
-    };
+  // Default data structure in case API hasn't responded yet
+  const defaultData = {
+    humidity: "N/A",
+    internalTemp: "N/A",
+    externalTemp: "N/A",
+    weight: "N/A",
+    alert: "Not detected",
+    prediction: "Not detected",
+  };
 
-    fetchData();
-    const interval = setInterval(fetchData, 8000); // Refresh every 8 seconds
-    return () => clearInterval(interval);
-  }, []);
+  const data = {
+    humidity: isLoading ? "Loading..." : getLatestValue("humidity") + "%",
+    internalTemp: isLoading ? "Loading..." : getLatestValue("internalTemp") + "°C",
+    externalTemp: isLoading ? "Loading..." : getLatestValue("externalTemp") + "°C",
+    weight: isLoading ? "Loading..." : getLatestValue("weight") + " KG",
+    alert: defaultData.alert,
+    prediction: defaultData.prediction,
+  };
+
+  const sensorCards = [
+    { 
+      label: "Humidity", 
+      value: data.humidity,
+      dataKey: "humidity",
+      color: "#3b82f6", // blue-500
+      unit: ""
+    },
+    { 
+      label: "Internal Temperature", 
+      value: data.internalTemp,
+      dataKey: "internalTemp",
+      color: "#ef4444", // red-500
+      unit: ""
+    },
+    { 
+      label: "External Temperature", 
+      value: data.externalTemp,
+      dataKey: "externalTemp",
+      color: "#f59e0b", // amber-500
+      unit: ""
+    },
+    { 
+      label: "Weight", 
+      value: data.weight,
+      dataKey: "weight",
+      color: "#10b981", // emerald-500
+      unit: ""
+    },
+  ];
 
   return (
     <div
@@ -74,28 +150,31 @@ const BeehiveDashboard = () => {
             {hiveName}
           </h2>
 
-          {/* Sensor Cards */}
+       
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {allSensorData && (
-              <>
-                <SensorCardWithGraph label="Humidity" data={allSensorData.humidity} unit="%" loading={loading} />
-                <SensorCardWithGraph label="Internal Temperature" data={allSensorData.internalTemp} unit="°C" loading={loading} />
-                <SensorCardWithGraph label="External Temperature" data={allSensorData.externalTemp} unit="°C" loading={loading} />
-                <SensorCardWithGraph label="Weight" data={allSensorData.weight} unit="KG" loading={loading} />
-              </>
-            )}
+            {sensorCards.map((card, i) => (
+              <SensorCard
+                key={i}
+                label={card.label}
+                value={card.value}
+                data={sensorData ? sensorData[card.dataKey] : []}
+                dataKey="value"
+                color={card.color}
+                unit={card.unit}
+              />
+            ))}
           </div>
 
-          {/* Alert and Prediction */}
           <div className="bg-white rounded-xl p-4 shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center">
             <div>
               <p>
                 <span className="font-semibold">Alert:</span>{" "}
-                <span className="text-gray-700">{staticData.alert}</span>
+                <span className="text-gray-700">{data.alert}</span>
               </p>
               <p>
                 <span className="font-semibold">Prediction:</span>{" "}
-                <span className="text-gray-700">{staticData.prediction}</span>
+                <span className="text-gray-700">{data.prediction}</span>
               </p>
             </div>
             <button className="mt-4 sm:mt-0 bg-transparent border border-gray-400 rounded px-4 py-2 text-gray-700 hover:bg-gray-100 transition">

@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import HiveCard from "./Hives";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import Menus from "./Menus";
+import axios from "axios";
 
 const HiveGrid = () => {
+  const [hives, setHives] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const sidebarRef = useRef(null);
-
-  const hives = [...Array(6)].map((_, i) => i + 1);
 
   const handleNext = () => {
     setCurrentIndex((prev) => (prev + 1) % hives.length);
@@ -21,6 +21,20 @@ const HiveGrid = () => {
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
+
+  // Fetch hive data from API
+  useEffect(() => {
+    const fetchHives = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/sensors/api/beehive/4/");
+        setHives(response.data); // Assuming response.data is an array of hives
+      } catch (error) {
+        console.error("Failed to fetch hive data:", error);
+      }
+    };
+
+    fetchHives();
+  }, []);
 
   // Handle click outside sidebar
   useEffect(() => {
@@ -42,7 +56,6 @@ const HiveGrid = () => {
 
       {/* Main Content */}
       <main className={`flex-1 transition-all duration-300 p-4 md:p-6 ${isSidebarVisible ? "ml-0 md:ml-[250px]" : "ml-0"}`}>
-     
         {/* Logo and Heading */}
         <div className="mb-6 px-6 md:px-20">
           <h1 className="text-3xl border-b pb-3 font-bold flex space-x-2">
@@ -70,9 +83,17 @@ const HiveGrid = () => {
               className="flex transition-transform duration-500 ease-in-out"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-              {hives.map((hiveNumber, index) => (
-                <div key={index} className="flex-shrink-0 w-full">
-                  <HiveCard hiveNumber={hiveNumber} />
+              {hives.map((hive, index) => (
+                <div key={hive.id || index} className="flex-shrink-0 w-full">
+                  <HiveCard
+                    hiveNumber={hive.hive_number}
+                    imageSrc={hive.image || "/assets/hhive.png"}
+                    linkTo={`/beehivedashboard/${hive.id}`}
+                    internalTemp={hive.internal_temp}
+                    externalTemp={hive.external_temp}
+                    humidity={hive.humidity}
+                    weight={hive.weight}
+                  />
                 </div>
               ))}
             </div>
@@ -84,8 +105,17 @@ const HiveGrid = () => {
 
         {/* Desktop Grid */}
         <div className="hidden md:grid md:grid-cols-3 gap-16 max-w-[1200px] px-10">
-          {hives.map((hiveNumber, i) => (
-            <HiveCard key={i} hiveNumber={hiveNumber} />
+          {hives.map((hive, i) => (
+            <HiveCard
+              key={hive.id || i}
+              hiveNumber={hive.hive_number}
+              imageSrc={hive.image || "/assets/hhive.png"}
+              linkTo={`/beehivedashboard/${hive.id}`}
+              internalTemp={hive.internal_temp}
+              externalTemp={hive.external_temp}
+              humidity={hive.humidity}
+              weight={hive.weight}
+            />
           ))}
         </div>
       </main>

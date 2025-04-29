@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const HiveCard = ({ hiveNumber, imageSrc, linkTo = "/beehivedashboard" }) => {
+const HiveCard = ({ hiveNumber, imageSrc, linkTo = "/beehivedashboard", internalTemp, externalTemp, humidity, weight }) => {
   return (
     <div className="flex flex-col items-center mt-14">
       {/* Hive Button with dynamic link */}
@@ -15,9 +15,9 @@ const HiveCard = ({ hiveNumber, imageSrc, linkTo = "/beehivedashboard" }) => {
       </Link>
 
       {/* Blob + Data */}
-      <div className="relative w-72 h-72 mt-4">
+      <div className="relative w-80 h-80 mt-4">
         <svg
-          viewBox="0 0 200 200"
+          viewBox="0 0 200 180"
           xmlns="http://www.w3.org/2000/svg"
           className="absolute top-14 left-0 w-full h-full z-0"
         >
@@ -34,9 +34,10 @@ const HiveCard = ({ hiveNumber, imageSrc, linkTo = "/beehivedashboard" }) => {
             alt={`Hive ${hiveNumber}`}
             className="w-2/3 mb-2"
           />
-          <p className="text-sm font-medium text-gray-700">Temperature: 5°C</p>
-          <p className="text-sm font-medium text-gray-700">Humidity: 5%</p>
-          <p className="text-sm font-medium text-gray-700">Weight: 5kg</p>
+          <p className="text-sm font-medium text-gray-700">Internal Temperature: {internalTemp ?? "--"}°C</p>
+          <p className="text-sm font-medium text-gray-700">External Temperature: {externalTemp ?? "--"}°C</p>
+          <p className="text-sm font-medium text-gray-700">Humidity: {humidity ?? "--"}%</p>
+          <p className="text-sm font-medium text-gray-700">Weight: {weight ?? "--"}kg</p>
         </div>
       </div>
     </div>

@@ -45,7 +45,7 @@ const AuthPage = () => {
               : { 
                   username, 
                   password, 
-                  password_confirmation: confirmPassword, // ✅ Added here
+                  password_confirmation: confirmPassword,
                   first_name: firstName, 
                   last_name: lastName, 
                   email 
