@@ -1,17 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const HiveCard = ({ hiveNumber, imageSrc, linkTo = "/beehivedashboard", internalTemp, externalTemp, humidity, weight }) => {
-  console.log("HiveCard props:", { hiveNumber, imageSrc, linkTo, internalTemp, externalTemp, humidity, weight });
+const HiveCard = ({ hivename, imageSrc, linkTo = "/beehivedashboard", internalTemp, externalTemp, humidity, weight }) => {
+  console.log("HiveCard props:", { hivename, imageSrc, linkTo, internalTemp, externalTemp, humidity, weight });
   return (
     <div className="flex flex-col items-center mt-14">
       {/* Hive Button with dynamic link */}
       <Link
         to={linkTo}
-        state={{ hiveName: `Hive ${hiveNumber}` }}
+        state={{ hiveName: `Hive ${hivename}` }}
       >
         <button className="px-4 py-1 bg-white rounded-full shadow text-gray-800 font-medium">
-          Hive {hiveNumber}
+          {hivename}
         </button>
       </Link>
 
@@ -32,7 +32,7 @@ const HiveCard = ({ hiveNumber, imageSrc, linkTo = "/beehivedashboard", internal
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-4 z-10">
           <img
             src={imageSrc || "assets/hhive.png"}
-            alt={`Hive ${hiveNumber}`}
+            alt={`Hive ${hivename}`}
             className="w-2/3 mb-2"
           />
           <p className="text-sm font-medium text-gray-700">Internal Temperature: {internalTemp ?? "--"}°C</p>

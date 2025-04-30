@@ -9,12 +9,12 @@ const History = () => {
   };
 
   const data = [
-    { time: "00:00", temp: "25 ℃", humidity: "60 %", weight: "50 kg", count: "1000" },
-    { time: "04:00", temp: "24 ℃", humidity: "62 %", weight: "49 kg", count: "950" },
-    { time: "08:00", temp: "26 ℃", humidity: "58 %", weight: "51 kg", count: "1100" },
-    { time: "12:00", temp: "28 ℃", humidity: "55 %", weight: "50 kg", count: "1200" },
-    { time: "16:00", temp: "27 ℃", humidity: "57 %", weight: "50 kg", count: "1150" },
-    { time: "20:00", temp: "25 ℃", humidity: "61 %", weight: "49 kg", count: "1050" },
+    { time: "00:00", internaltemp: "25 ℃",externaltemp: "25 ℃", humidity: "60 %", weight: "50 kg" },
+    { time: "04:00", internaltemp: "24 ℃",externaltemp: "24 ℃", humidity: "62 %", weight: "49 kg"},
+    { time: "08:00", internaltemp: "26 ℃",externaltemp: "26 ℃", humidity: "58 %", weight: "51 kg" },
+    { time: "12:00", internaltemp: "28 ℃",externaltemp: "28 ℃", humidity: "55 %", weight: "50 kg" },
+    { time: "16:00", internaltemp: "27 ℃",externaltemp: "27 ℃", humidity: "57 %", weight: "50 kg" },
+    { time: "20:00", internaltemp: "25 ℃",externaltemp: "25 ℃", humidity: "61 %", weight: "49 kg" },
   ];
 
   return (
@@ -39,20 +39,20 @@ const History = () => {
             <thead>
               <tr className="bg-gray-200 text-left">
                 <th className="p-3 border border-gray-300 ">Time</th>
-                <th className="p-3 border border-gray-300">Temperature</th>
+                <th className="p-3 border border-gray-300">Internal Temperature</th>
+                <th className="p-3 border border-gray-300">External Temperature</th>
                 <th className="p-3 border border-gray-300">Humidity</th>
                 <th className="p-3 border border-gray-300">Weight</th>
-                <th className="p-3 border border-gray-300">Bee Count</th>
               </tr>
             </thead>
             <tbody>
               {data.map((row, index) => (
                 <tr key={index} className="text-gray-700 hover:bg-gray-100">
                   <td className="p-3 border border-gray-300">{row.time}</td>
-                  <td className="p-3 border border-gray-300">{row.temp}</td>
+                  <td className="p-3 border border-gray-300">{row.internaltemp}</td>
+                  <td className="p-3 border border-gray-300">{row.externaltemp}</td>
                   <td className="p-3 border border-gray-300">{row.humidity}</td>
                   <td className="p-3 border border-gray-300">{row.weight}</td>
-                  <td className="p-3 border border-gray-300">{row.count}</td>
                 </tr>
               ))}
             </tbody>

@@ -23,7 +23,7 @@ export default function App() {
   // Hide Navbar on "/dashboard" and "/history" pages
   const hideNavbar = location.pathname === "/Signin" || location.pathname === "/dashboard" || 
   location.pathname === "/history" || location.pathname === "/settings" 
-  || location.pathname === "/hives" || location.pathname === "/beehivedashboard" || 
+  || location.pathname === "/hives" || location.pathname.startsWith("/beehivedashboard/") || 
   location.pathname === "/settingway" || location.pathname === "/active" || location.pathname === "/beeactive";
 
   return (
@@ -53,7 +53,7 @@ export default function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/hives" element={<HiveGrid />} />
-        <Route path = "/beehivedashboard" element = {<BeehiveDashboard/>}/>
+        <Route path="/beehivedashboard/:id" element={<BeehiveDashboard />} />
         <Route path = "/settingway" element = {<Settingway/>}/>
       </Routes>
     </div>

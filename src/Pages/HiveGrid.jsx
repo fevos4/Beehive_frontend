@@ -3,12 +3,14 @@ import HiveCard from "./Hives";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import Menus from "./Menus";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const HiveGrid = () => {
   const [hives, setHives] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const sidebarRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleNext = () => {
     setCurrentIndex((prev) => (prev + 1) % hives.length);
@@ -27,22 +29,19 @@ const HiveGrid = () => {
     const fetchHives = async () => {
       try {
         const token = localStorage.getItem("token");
-        console.log('token:' ,token);
-        const response = await axios.get("http://127.0.0.1:8000/sensors/api/beehive/1/",  {
+        const response = await axios.get("http://127.0.0.1:8000/sensors/api/beehive/1/", {
           headers: {
-            Authorization: `Bearer ${token}`, // Replace YOUR_TOKEN_HERE with your actual token
+            Authorization: `Bearer ${token}`,
           },
-        } );
-        
-        setHives([response.data]); // Assuming response.data is an array of hives
+        });
+
+        setHives([response.data]); // Wrap in array if single object
       } catch (error) {
         console.error("Failed to fetch hive data:", error);
-      
       }
     };
 
-   fetchHives();
-
+    fetchHives();
   }, []);
 
   // Handle click outside sidebar
@@ -57,6 +56,10 @@ const HiveGrid = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleCardClick = (hive) => {
+    navigate(`/beehivedashboard/${hive.id}`, { state: { hiveName: hive.name } });
+  };
 
   return (
     <div className="flex flex-col md:flex-row relative font-montserrat" ref={sidebarRef}>
@@ -92,13 +95,16 @@ const HiveGrid = () => {
               className="flex transition-transform duration-500 ease-in-out"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-              {console.log("hives:", hives)}
               {hives.map((hive, index) => (
-                <div key={hive.id || index} className="flex-shrink-0 w-full">
+                <div
+                  key={hive.id || index}
+                  className="flex-shrink-0 w-full cursor-pointer"
+                  onClick={() => handleCardClick(hive)}
+                >
                   <HiveCard
-                    hiveNumber={hive.name}
+                    hivename={hive.name}
                     imageSrc={hive.image || "/assets/hhive.png"}
-                    linkTo={`/beehivedashboard/${hive.id}`}
+                    linkTo="#" // No link needed as we handle navigation manually
                     internalTemp={hive.Temperature}
                     externalTemp={hive.ExternalTemperature}
                     humidity={hive.Humidity}
@@ -116,16 +122,17 @@ const HiveGrid = () => {
         {/* Desktop Grid */}
         <div className="hidden md:grid md:grid-cols-3 gap-16 max-w-[1200px] px-10">
           {hives.map((hive, i) => (
-            <HiveCard
-              key={hive.id || i}
-              hiveNumber={hive.hive_number}
-              imageSrc={hive.image || "/assets/hhive.png"}
-              linkTo={`/beehivedashboard/${hive.id}`}
-              internalTemp={hive.internal_temp}
-              externalTemp={hive.external_temp}
-              humidity={hive.humidity}
-              weight={hive.weight}
-            />
+            <div key={hive.id || i} onClick={() => handleCardClick(hive)} className="cursor-pointer">
+              <HiveCard
+                hivename={hive.name}
+                imageSrc={hive.image || "/assets/hhive.png"}
+                linkTo="#" // No navigation here
+                internalTemp={hive.Temperature}
+                externalTemp={hive.ExternalTemperature}
+                humidity={hive.Humidity}
+                weight={hive.Weight}
+              />
+            </div>
           ))}
         </div>
       </main>

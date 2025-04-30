@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import Menus from "./Menus";
 import { useLocation } from "react-router-dom";
-import SensorCard from "./SensorChart"; // Import the new component
+import SensorCard from "./SensorChart"; 
+import axios from "axios";
+
 
 const BeehiveDashboard = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
@@ -14,25 +16,20 @@ const BeehiveDashboard = () => {
   const location = useLocation();
   const hiveName = location.state?.hiveName || "Hive 01"; // default fallback
 
-  const userId = localStorage.getItem("userId"); // or from auth context
-  const API_ENDPOINT = `http://127.0.0.1:8000/sensors/api/beehive/${userId}/`;  
+  const API_ENDPOINT = `http://127.0.0.1:8000/sensors/api/beehive/1/`;  
 
   const fetchSensorData = async () => {
     try {
-      const token = localStorage.getItem("token"); // or from cookies, context, etc.
+      const token = localStorage.getItem("token");
+      console.log("token:", token);
   
-      const response = await fetch(API_ENDPOINT, {
+      const response = await axios.get("http://127.0.0.1:8000/sensors/api/beehive/1/", {
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // or `Token ${token}` depending on your backend
+          Authorization: `Bearer ${token}`,
         },
       });
   
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-  
-      const data = await response.json();
+      const data = response.data;
       setSensorData(data);
       setIsLoading(false);
     } catch (err) {
@@ -41,6 +38,7 @@ const BeehiveDashboard = () => {
       console.error("Error fetching sensor data:", err);
     }
   };
+  
   
   
 
